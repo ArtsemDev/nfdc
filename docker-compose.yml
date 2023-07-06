@@ -10,19 +10,12 @@ services:
       - "80:80"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
-    networks:
-      - custom
 
   app:
     build: .
+    container_name: app
     command: uvicorn app:app --reload --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     volumes:
       - .:/app
-    networks:
-      - custom
-
-networks:
-  custom:
-    driver: bridge
