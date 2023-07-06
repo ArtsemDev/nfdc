@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+
+  nginx:
+    image: nginx:1.25-alpine3.17-slim
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    networks:
+      - custom
+
+  app:
+    build: .
+    command: uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
