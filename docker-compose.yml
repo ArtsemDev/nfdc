@@ -6,16 +6,29 @@ services:
     image: nginx:1.25-alpine3.17-slim
     depends_on:
       - app
+    restart: always
     ports:
       - "80:80"
+#      Порт для HTTPS
+#      - "443:443"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
-
+      - ./log:/var/log/nginx
+#      Открываем доступ nginx к директориям где certbot будет складывать сертификаты, чтобы получать к ним доступ
+#      - ./certbot/www:/var/www/certbot/:ro
+#      - ./certbot/conf/:/etc/nginx/ssl/:ro
   app:
     build: .
     container_name: app
-    command: uvicorn app:app --reload --host 0.0.0.0 --port 8000
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+    restart: always
+
+#  certbot:
+#    image: certbot/certbot
+#    volumes:
+#      - ./certbot/www/:/var/www/certbot/:rw
+#      - ./certbot/conf/:/etc/letsencrypt/:rw
